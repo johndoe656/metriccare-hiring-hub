@@ -127,7 +127,14 @@
 <body class="bg-gray-50 font-inter text-slate-800">
 
     <div class="max-w-md mx-auto bg-white min-h-screen shadow-xl">
-        
+
+        <!-- Quick Access Navigation -->
+        <div class="bg-slate-900 text-white px-6 py-2 flex gap-2 justify-center text-xs">
+            <a href="/analytics.html" class="hover:text-blue-200 font-medium transition">📊 Analytics</a>
+            <span class="text-slate-500">•</span>
+            <a href="/content-library.html" class="hover:text-blue-200 font-medium transition">🎬 Content Library</a>
+        </div>
+
         <!-- Header -->
         <div class="bg-gradient-header text-white px-6 py-8">
             <div class="text-center">
@@ -252,10 +259,30 @@
             </div>
         </div>
 
+        <!-- TikTok Social Proof Section -->
+        <div class="px-6 py-6 bg-gradient-to-r from-blue-50 to-blue-100/50">
+            <h3 class="text-center font-bold text-slate-800 mb-3">Trusted by Our Community</h3>
+            <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="bg-white rounded-lg p-3">
+                    <p class="text-sm font-bold text-blue-600">2,847+</p>
+                    <p class="text-xs text-slate-600">Active Workers</p>
+                </div>
+                <div class="bg-white rounded-lg p-3">
+                    <p class="text-sm font-bold text-green-600">$18-23/hr</p>
+                    <p class="text-xs text-slate-600">Competitive Pay</p>
+                </div>
+                <div class="bg-white rounded-lg p-3">
+                    <p class="text-sm font-bold text-purple-600">47 Spots</p>
+                    <p class="text-xs text-slate-600">Available Now</p>
+                </div>
+            </div>
+        </div>
+
         <!-- Available Shifts -->
         <div class="px-6 pb-8">
             <h2 class="text-xl font-bold text-slate-800 mb-1 text-center">Available Shifts</h2>
-            <p class="text-sm text-slate-600 text-center mb-5">4-hour shifts • Work part-time (1-5 shifts/week) or full-time (8+ shifts/week)</p>
+            <p class="text-sm text-slate-600 text-center mb-2">4-hour shifts • Work part-time (1-5 shifts/week) or full-time (8+ shifts/week)</p>
+            <p class="text-xs text-center text-green-600 font-semibold mb-5">⚡ Hiring closes Friday - limited spots this week</p>
             
             <!-- Morning Shifts -->
             <div class="mb-6">
@@ -543,54 +570,13 @@
 
     <!-- Firebase Integration -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, addDoc, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBxQnGpJDlWsRVLW_L0x0AiWLeLcsCW7Yc",
-            authDomain: "e-data-ebd0f.firebaseapp.com",
-            projectId: "e-data-ebd0f",
-            storageBucket: "e-data-ebd0f.firebasestorage.app",
-            messagingSenderId: "310197380068",
-            appId: "1:310197380068:web:fc94f3ec4727357f439df1",
-            measurementId: "G-VMJLRVCKKC"
-        };
-        
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'remote-employment-funnel';
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        let db, auth, userId;
-        let isAuthReady = false;
+        import { submitApplication } from './src/supabase.js'
 
         const form = document.getElementById('application-form');
         const submitButton = document.getElementById('submit-button');
         const buttonText = document.getElementById('button-text');
         const loadingSpinner = document.getElementById('loading-spinner');
         const statusMessage = document.getElementById('status-message');
-
-        try {
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            
-            onAuthStateChanged(auth, async (user) => {
-                if (!user) {
-                    if (initialAuthToken) {
-                        await signInWithCustomToken(auth, initialAuthToken);
-                    } else {
-                        const anonUser = await signInAnonymously(auth);
-                        userId = anonUser.user.uid;
-                    }
-                } else {
-                    userId = user.uid;
-                }
-                isAuthReady = true;
-            });
-
-        } catch (error) {
-            console.error("Firebase initialization failed:", error);
-        }
 
         const setLoading = (isLoading) => {
             submitButton.disabled = isLoading;
@@ -604,63 +590,43 @@
             statusMessage.classList.add(isSuccess ? 'text-green-500' : 'text-red-500');
         };
 
-        const saveApplicationToFirestore = async (data) => {
-            while (!isAuthReady || !userId) {
-                await new Promise(resolve => setTimeout(resolve, 100));
-            }
-            
-            if (!db || !userId) return false;
-            
-            const applicationData = {
-                ...data,
-                userId: userId,
-                timestamp: new Date().toISOString(),
-                status: 'New Application - Pending Review'
-            };
-
-            try {
-                const collectionPath = `/artifacts/${appId}/public/data/applications`;
-                await addDoc(collection(db, collectionPath), applicationData);
-                return true;
-            } catch (error) {
-                console.error("Firestore save error:", error);
-                return false;
-            }
-        };
-
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             setLoading(true);
             showStatus('', false);
 
-            const formspreePromise = fetch(form.action, {
-                method: form.method,
-                body: new FormData(form),
-                headers: { 'Accept': 'application/json' }
-            });
-
             const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-            
-            const firestoreSuccess = await saveApplicationToFirestore(data);
-            
-            let formspreeSuccess = false;
+            const data = {
+                fullName: formData.get('fullName'),
+                email: formData.get('_replyto'),
+                phone: formData.get('phone'),
+                city: formData.get('city'),
+                state: formData.get('state'),
+                experience: formData.get('experience'),
+                employmentType: formData.get('employmentType'),
+                startDate: formData.get('startDate'),
+                resumeLink: formData.get('resumeLink'),
+                workAuthorization: formData.get('workAuthorization') === 'on',
+                selectedShift: formData.get('selectedShift')
+            };
+
             try {
-                const formspreeResponse = await formspreePromise;
-                formspreeSuccess = formspreeResponse.ok;
+                const result = await submitApplication(data);
+
+                setLoading(false);
+
+                if (result.success) {
+                    showStatus('✅ Application submitted successfully! Check your email within 24-48 hours.', true);
+                    form.reset();
+                    window.selectedShift = '';
+                    setTimeout(window.closeApplicationModal, 3000);
+                } else {
+                    showStatus(`❌ Error: ${result.error}`, false);
+                }
             } catch (error) {
-                formspreeSuccess = false;
-            }
-
-            setLoading(false);
-
-            if (formspreeSuccess || firestoreSuccess) {
-                showStatus('✅ Application submitted successfully! Check your email within 24-48 hours.', true);
-                form.reset();
-                window.selectedShift = '';
-                setTimeout(window.closeApplicationModal, 3000);
-            } else {
+                setLoading(false);
                 showStatus('❌ Submission error. Please check your connection and try again.', false);
+                console.error('Form error:', error);
             }
         });
     </script>
