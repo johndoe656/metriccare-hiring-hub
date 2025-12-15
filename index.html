@@ -40,11 +40,11 @@
         
         .form-input {
             width: 100%;
-            padding: 0.75rem 1rem;
+            padding: 0.875rem 1rem;
             border: 2px solid #e5e7eb;
             border-radius: 0.5rem;
             transition: all 0.2s;
-            font-size: 0.9375rem;
+            font-size: 1rem;
         }
         
         .form-input:focus {
@@ -76,10 +76,22 @@
         .notification-popup {
             animation: slideInUp 0.4s ease-out;
         }
+
+        /* TikTok-optimized tap targets */
+        button, a {
+            min-height: 44px;
+            -webkit-tap-highlight-color: transparent;
+        }
     </style>
     
     <script>
         window.selectedShift = '';
+        
+        // Get TikTok referral parameter from URL
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
         
         window.openApplicationModal = function(shift) {
             const modal = document.getElementById('applicationModal');
@@ -88,6 +100,10 @@
 
             window.selectedShift = shift;
             hiddenInput.value = shift;
+            
+            // Store referral source if exists
+            const source = getUrlParameter('ref') || getUrlParameter('source') || 'tiktok-direct';
+            document.getElementById('sourceInput').value = source;
             
             document.getElementById('status-message').classList.add('hidden');
             document.getElementById('application-form').reset();
@@ -127,12 +143,16 @@
 <body class="bg-gray-50 font-inter text-slate-800">
 
     <div class="max-w-md mx-auto bg-white min-h-screen shadow-xl">
-
-        <!-- Quick Access Navigation -->
-        <div class="bg-slate-900 text-white px-6 py-2 flex gap-2 justify-center text-xs">
-            <a href="/analytics.html" class="hover:text-blue-200 font-medium transition">📊 Analytics</a>
-            <span class="text-slate-500">•</span>
-            <a href="/content-library.html" class="hover:text-blue-200 font-medium transition">🎬 Content Library</a>
+        
+        <!-- Trust Banner -->
+        <div class="bg-blue-600 text-white px-4 py-3 text-center">
+            <div class="flex items-center justify-center gap-2 mb-1">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span class="font-bold text-sm">VERIFIED EMPLOYER • IMMEDIATE OPENINGS</span>
+            </div>
+            <p class="text-xs opacity-90 mt-1">Apply in 3 minutes • Start earning $18-23/hr</p>
         </div>
 
         <!-- Header -->
@@ -259,30 +279,10 @@
             </div>
         </div>
 
-        <!-- TikTok Social Proof Section -->
-        <div class="px-6 py-6 bg-gradient-to-r from-blue-50 to-blue-100/50">
-            <h3 class="text-center font-bold text-slate-800 mb-3">Trusted by Our Community</h3>
-            <div class="grid grid-cols-3 gap-2 text-center">
-                <div class="bg-white rounded-lg p-3">
-                    <p class="text-sm font-bold text-blue-600">2,847+</p>
-                    <p class="text-xs text-slate-600">Active Workers</p>
-                </div>
-                <div class="bg-white rounded-lg p-3">
-                    <p class="text-sm font-bold text-green-600">$18-23/hr</p>
-                    <p class="text-xs text-slate-600">Competitive Pay</p>
-                </div>
-                <div class="bg-white rounded-lg p-3">
-                    <p class="text-sm font-bold text-purple-600">47 Spots</p>
-                    <p class="text-xs text-slate-600">Available Now</p>
-                </div>
-            </div>
-        </div>
-
         <!-- Available Shifts -->
         <div class="px-6 pb-8">
             <h2 class="text-xl font-bold text-slate-800 mb-1 text-center">Available Shifts</h2>
-            <p class="text-sm text-slate-600 text-center mb-2">4-hour shifts • Work part-time (1-5 shifts/week) or full-time (8+ shifts/week)</p>
-            <p class="text-xs text-center text-green-600 font-semibold mb-5">⚡ Hiring closes Friday - limited spots this week</p>
+            <p class="text-sm text-slate-600 text-center mb-5">4-hour shifts • Work part-time (1-5 shifts/week) or full-time (8+ shifts/week)</p>
             
             <!-- Morning Shifts -->
             <div class="mb-6">
@@ -301,7 +301,7 @@
                             <span class="badge bg-blue-100 text-blue-700">Open</span>
                         </div>
                         <button onclick="window.openApplicationModal('Morning: 5am-9am EST')" 
-                                class="apply-btn w-full text-white font-semibold py-2.5 rounded-lg mt-2">
+                                class="apply-btn w-full text-white font-semibold py-3 rounded-lg mt-2 text-base">
                             Apply for This Shift
                         </button>
                     </div>
@@ -315,7 +315,7 @@
                             <span class="badge bg-green-100 text-green-700">High Demand</span>
                         </div>
                         <button onclick="window.openApplicationModal('Morning: 9am-1pm EST')" 
-                                class="apply-btn w-full text-white font-semibold py-2.5 rounded-lg mt-2">
+                                class="apply-btn w-full text-white font-semibold py-3 rounded-lg mt-2 text-base">
                             Apply for This Shift
                         </button>
                     </div>
@@ -339,7 +339,7 @@
                             <span class="badge bg-blue-100 text-blue-700">Open</span>
                         </div>
                         <button onclick="window.openApplicationModal('Afternoon: 1pm-5pm EST')" 
-                                class="apply-btn w-full text-white font-semibold py-2.5 rounded-lg mt-2">
+                                class="apply-btn w-full text-white font-semibold py-3 rounded-lg mt-2 text-base">
                             Apply for This Shift
                         </button>
                     </div>
@@ -363,7 +363,7 @@
                             <span class="badge bg-blue-100 text-blue-700">Open</span>
                         </div>
                         <button onclick="window.openApplicationModal('Evening: 5pm-9pm EST')" 
-                                class="apply-btn w-full text-white font-semibold py-2.5 rounded-lg mt-2">
+                                class="apply-btn w-full text-white font-semibold py-3 rounded-lg mt-2 text-base">
                             Apply for This Shift
                         </button>
                     </div>
@@ -377,7 +377,7 @@
                             <span class="badge bg-purple-100 text-purple-700">Limited</span>
                         </div>
                         <button onclick="window.openApplicationModal('Evening: 9pm-1am EST')" 
-                                class="apply-btn w-full text-white font-semibold py-2.5 rounded-lg mt-2">
+                                class="apply-btn w-full text-white font-semibold py-3 rounded-lg mt-2 text-base">
                             Apply for This Shift
                         </button>
                     </div>
@@ -477,6 +477,7 @@
                         
                         <input type="text" name="_gotcha" style="display:none" />
                         <input type="hidden" id="selectedShiftInput" name="selectedShift" value="">
+                        <input type="hidden" id="sourceInput" name="source" value="tiktok-direct">
 
                         <!-- Personal Information -->
                         <div>
@@ -551,12 +552,11 @@
                             </div>
                         </div>
 
-                        <input type="hidden" name="source" value="TikTok Remote Employment Funnel">
                         <input type="hidden" name="_subject" value="NEW APPLICATION: Remote Data Entry Position">
                         
                         <div id="status-message" class="text-center mt-4 text-sm font-medium hidden"></div>
 
-                        <button type="submit" id="submit-button" class="w-full apply-btn text-white py-3.5 rounded-lg font-bold text-base shadow-lg mt-6">
+                        <button type="submit" id="submit-button" class="w-full apply-btn text-white py-4 rounded-lg font-bold text-base shadow-lg mt-6">
                             <span id="button-text">Submit Application</span>
                             <span id="loading-spinner" class="hidden inline-block animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full"></span>
                         </button>
@@ -568,10 +568,8 @@
         </div>
     </div>
 
-    <!-- Firebase Integration -->
+    <!-- Form Submission Script -->
     <script type="module">
-        import { submitApplication } from './src/supabase.js'
-
         const form = document.getElementById('application-form');
         const submitButton = document.getElementById('submit-button');
         const buttonText = document.getElementById('button-text');
@@ -595,33 +593,22 @@
             setLoading(true);
             showStatus('', false);
 
-            const formData = new FormData(form);
-            const data = {
-                fullName: formData.get('fullName'),
-                email: formData.get('_replyto'),
-                phone: formData.get('phone'),
-                city: formData.get('city'),
-                state: formData.get('state'),
-                experience: formData.get('experience'),
-                employmentType: formData.get('employmentType'),
-                startDate: formData.get('startDate'),
-                resumeLink: formData.get('resumeLink'),
-                workAuthorization: formData.get('workAuthorization') === 'on',
-                selectedShift: formData.get('selectedShift')
-            };
-
             try {
-                const result = await submitApplication(data);
+                const response = await fetch(form.action, {
+                    method: form.method,
+                    body: new FormData(form),
+                    headers: { 'Accept': 'application/json' }
+                });
 
                 setLoading(false);
 
-                if (result.success) {
+                if (response.ok) {
                     showStatus('✅ Application submitted successfully! Check your email within 24-48 hours.', true);
                     form.reset();
                     window.selectedShift = '';
                     setTimeout(window.closeApplicationModal, 3000);
                 } else {
-                    showStatus(`❌ Error: ${result.error}`, false);
+                    showStatus('❌ Submission error. Please check your connection and try again.', false);
                 }
             } catch (error) {
                 setLoading(false);
