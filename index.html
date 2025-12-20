@@ -3,634 +3,343 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Remote Data Entry - Part-Time & Full-Time Positions</title>
+    <title>Healthcare Documentation Specialist - Remote Opportunities</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        .font-inter { font-family: 'Inter', sans-serif; }
-        
-        .bg-gradient-header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-        }
-        
-        .apply-btn {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            transition: all 0.3s ease;
-        }
-        
-        .apply-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
-        }
-        
-        .shift-card {
-            transition: all 0.3s ease;
-            border-left: 3px solid #3b82f6;
-        }
-        
-        .shift-card:hover {
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-            border-left-color: #059669;
-        }
-        
-        .modal-overlay {
-            background-color: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(3px);
-        }
-        
-        .form-input {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
-            font-size: 1rem;
-        }
-        
-        .form-input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-            outline: none;
-        }
-        
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.625rem;
-            border-radius: 0.375rem;
-            font-size: 0.75rem;
-            font-weight: 600;
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
         }
 
-        @keyframes slideInUp {
-            from {
-                transform: translateY(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+        .heading-font {
+            font-family: 'Space Grotesk', sans-serif;
         }
 
-        .notification-popup {
-            animation: slideInUp 0.4s ease-out;
+        .gradient-primary {
+            background: linear-gradient(135deg, #0d9488 0%, #06b6d4 100%);
         }
 
-        /* TikTok-optimized tap targets */
-        button, a {
-            min-height: 44px;
-            -webkit-tap-highlight-color: transparent;
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(6, 182, 212, 0.2);
+        }
+
+        .pulse-dot {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .modal-backdrop {
+            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.7);
         }
     </style>
-    
-    <script>
-        window.selectedShift = '';
-        
-        // Get TikTok referral parameter from URL
-        function getUrlParameter(name) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(name);
-        }
-        
-        window.openApplicationModal = function(shift) {
-            const modal = document.getElementById('applicationModal');
-            const title = document.getElementById('modalShiftTitle');
-            const hiddenInput = document.getElementById('selectedShiftInput');
-
-            window.selectedShift = shift;
-            hiddenInput.value = shift;
-            
-            // Store referral source if exists
-            const source = getUrlParameter('ref') || getUrlParameter('source') || 'tiktok-direct';
-            document.getElementById('sourceInput').value = source;
-            
-            document.getElementById('status-message').classList.add('hidden');
-            document.getElementById('application-form').reset();
-            
-            if(modal && title) {
-                title.textContent = shift;
-                modal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            }
-        }
-
-        window.closeApplicationModal = function() {
-            const modal = document.getElementById('applicationModal');
-            if(modal) {
-                modal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
-            }
-        }
-
-        window.closeNotification = function() {
-            const notification = document.getElementById('responseNotification');
-            if(notification) {
-                notification.classList.add('hidden');
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                const notification = document.getElementById('responseNotification');
-                if(notification) {
-                    notification.classList.remove('hidden');
-                }
-            }, 10000);
-        });
+    <script type="module">
+        import { submitApplication } from './src/app.js'
+        window.submitApplication = submitApplication
     </script>
 </head>
-<body class="bg-gray-50 font-inter text-slate-800">
+<body class="bg-gradient-to-br from-slate-50 via-cyan-50 to-teal-50">
 
-    <div class="max-w-md mx-auto bg-white min-h-screen shadow-xl">
-        
-        <!-- Trust Banner -->
-        <div class="bg-blue-600 text-white px-4 py-3 text-center">
-            <div class="flex items-center justify-center gap-2 mb-1">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-                <span class="font-bold text-sm">VERIFIED EMPLOYER • IMMEDIATE OPENINGS</span>
-            </div>
-            <p class="text-xs opacity-90 mt-1">Apply in 3 minutes • Start earning $18-23/hr</p>
+    <!-- Trust Banner -->
+    <div class="bg-gradient-to-r from-teal-600 via-cyan-600 to-teal-600 text-white py-3 px-4 text-center">
+        <div class="flex items-center justify-center gap-3 text-sm font-medium">
+            <span class="pulse-dot">🏥</span>
+            <span>HIPAA-COMPLIANT HEALTHCARE ORGANIZATION • VERIFIED EMPLOYER</span>
+            <span class="pulse-dot">✓</span>
         </div>
+        <p class="text-xs mt-1 opacity-90">Accepting applications • Immediate processing</p>
+    </div>
 
-        <!-- Header -->
-        <div class="bg-gradient-header text-white px-6 py-8">
-            <div class="text-center">
-                <h1 class="text-3xl font-bold mb-2">Remote Data Entry<br/>Immediate Openings</h1>
-                <p class="text-blue-100 text-sm">Part-Time & Full-Time • Flexible 4-hour shifts</p>
+    <!-- Hero Section -->
+    <div class="gradient-primary text-white px-6 py-12">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="inline-block mb-4 px-4 py-2 bg-white/20 rounded-full text-sm font-semibold backdrop-blur-sm">
+                🏠 Work From Home • Medical Records Processing
             </div>
-        </div>
-
-        <!-- Social Proof Section -->
-        <div class="px-6 py-5 bg-white border-b border-gray-200">
-            <div id="socialProof" class="text-center">
-                <p class="text-sm text-slate-700 font-medium mb-3">Join hundreds of remote workers</p>
-                <div class="grid grid-cols-3 gap-3">
-                    <div class="bg-blue-50 rounded-lg p-3">
-                        <p class="text-xl font-bold text-blue-600">500+</p>
-                        <p class="text-xs text-slate-600">Active Employees</p>
-                    </div>
-                    <div class="bg-green-50 rounded-lg p-3">
-                        <p class="text-xl font-bold text-green-600">4.8★</p>
-                        <p class="text-xs text-slate-600">Avg Rating</p>
-                    </div>
-                    <div class="bg-purple-50 rounded-lg p-3">
-                        <p class="text-xl font-bold text-purple-600">98%</p>
-                        <p class="text-xs text-slate-600">Retention</p>
-                    </div>
+            <h1 class="heading-font text-4xl md:text-5xl font-bold mb-4 leading-tight">
+                Healthcare Documentation<br/>Specialist Positions
+            </h1>
+            <p class="text-lg text-cyan-50 mb-6 max-w-2xl mx-auto">
+                Process medical records remotely with structured 4-hour sessions. Professional healthcare career with family-friendly flexibility.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3 text-sm">
+                <div class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20">
+                    💰 $19-24/hour
                 </div>
-            </div>
-        </div>
-
-        <!-- Key Benefits Grid -->
-        <div class="px-6 py-6 bg-gradient-to-b from-blue-50 to-white">
-            <div class="grid grid-cols-2 gap-3 mb-4">
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-                    <div class="text-2xl mb-1">💵</div>
-                    <p class="text-xs text-slate-600 font-medium">Hourly Rate</p>
-                    <p class="text-sm font-bold text-green-700">$18-23/hour</p>
+                <div class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20">
+                    🏥 Health Coverage
                 </div>
-                
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-                    <div class="text-2xl mb-1">⏰</div>
-                    <p class="text-xs text-slate-600 font-medium">Shift Length</p>
-                    <p class="text-sm font-bold text-slate-800">4 hours each</p>
+                <div class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20">
+                    ⏰ Flexible Sessions
                 </div>
-                
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-                    <div class="text-2xl mb-1">🏠</div>
-                    <p class="text-xs text-slate-600 font-medium">Work Location</p>
-                    <p class="text-sm font-bold text-slate-800">100% Remote</p>
-                </div>
-                
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-                    <div class="text-2xl mb-1">👶</div>
-                    <p class="text-xs text-slate-600 font-medium">Environment</p>
-                    <p class="text-sm font-bold text-slate-800">Family Friendly</p>
-                </div>
-            </div>
-
-            <!-- Benefits Section -->
-            <div class="bg-white border border-blue-200 rounded-lg p-4 mb-4">
-                <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center">
-                    <svg class="w-4 h-4 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
-                    </svg>
-                    <span>Employee Benefits Include:</span>
-                </h3>
-                <div class="grid grid-cols-1 gap-2 text-xs text-slate-700">
-                    <div class="flex items-start">
-                        <span class="text-green-600 mr-2">✓</span>
-                        <span><strong>Health & Dental Coverage</strong> (Full-time employees)</span>
-                    </div>
-                    <div class="flex items-start">
-                        <span class="text-green-600 mr-2">✓</span>
-                        <span><strong>Paid Training</strong> with compensation</span>
-                    </div>
-                    <div class="flex items-start">
-                        <span class="text-green-600 mr-2">✓</span>
-                        <span><strong>Biweekly Direct Deposit</strong> or Credit Card payment</span>
-                    </div>
-                    <div class="flex items-start">
-                        <span class="text-green-600 mr-2">✓</span>
-                        <span><strong>Paid Time Off</strong> & Holidays</span>
-                    </div>
-                    <div class="flex items-start">
-                        <span class="text-green-600 mr-2">✓</span>
-                        <span><strong>401(k) Plan</strong> (Full-time eligible)</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-                <p class="text-sm text-green-900">
-                    <span class="font-semibold">Background noise accepted.</span> We understand you're working from home—family sounds are normal and expected.
-                </p>
-            </div>
-        </div>
-
-        <!-- HIPAA Compliance Section -->
-        <div class="px-6 pb-6">
-            <div class="bg-blue-50 border-l-4 border-blue-600 rounded-lg p-4 mb-6">
-                <div class="flex items-start">
-                    <svg class="w-6 h-6 text-blue-600 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
-                    <div>
-                        <h3 class="text-sm font-bold text-blue-900 mb-1">Compliance & Security Commitment</h3>
-                        <p class="text-xs text-blue-800 leading-relaxed"><strong>HIPAA Compliant Data Handling:</strong> All information gathered is handled in strict compliance with HIPAA standards for protected health information.</p>
-                    </div>
-                </div>
-            </div>
-
-            <h2 class="text-lg font-bold text-slate-800 mb-3">Ideal For:</h2>
-            <div class="space-y-2 text-sm mb-6">
-                <div class="flex items-start">
-                    <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
-                    <span class="text-slate-700">Parents seeking income while caring for children</span>
-                </div>
-                <div class="flex items-start">
-                    <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
-                    <span class="text-slate-700">Retirees supplementing fixed income</span>
-                </div>
-                <div class="flex items-start">
-                    <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
-                    <span class="text-slate-700">Individuals with disabilities seeking flexible work</span>
-                </div>
-                <div class="flex items-start">
-                    <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
-                    <span class="text-slate-700">Anyone seeking full-time or part-time remote work</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Available Shifts -->
-        <div class="px-6 pb-8">
-            <h2 class="text-xl font-bold text-slate-800 mb-1 text-center">Available Shifts</h2>
-            <p class="text-sm text-slate-600 text-center mb-5">4-hour shifts • Work part-time (1-5 shifts/week) or full-time (8+ shifts/week)</p>
-            
-            <!-- Morning Shifts -->
-            <div class="mb-6">
-                <h3 class="text-base font-bold text-slate-700 mb-3 flex items-center">
-                    <span class="text-xl mr-2">🌅</span>
-                    Morning Shifts
-                </h3>
-                
-                <div class="space-y-3">
-                    <div class="shift-card bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-                        <div class="flex justify-between items-start mb-2">
-                            <div>
-                                <p class="font-bold text-lg text-slate-800">5am - 9am EST</p>
-                                <p class="text-xs text-slate-500 mt-0.5">Early hours before family wakes</p>
-                            </div>
-                            <span class="badge bg-blue-100 text-blue-700">Open</span>
-                        </div>
-                        <button onclick="window.openApplicationModal('Morning: 5am-9am EST')" 
-                                class="apply-btn w-full text-white font-semibold py-3 rounded-lg mt-2 text-base">
-                            Apply for This Shift
-                        </button>
-                    </div>
-                    
-                    <div class="shift-card bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-                        <div class="flex justify-between items-start mb-2">
-                            <div>
-                                <p class="font-bold text-lg text-slate-800">9am - 1pm EST</p>
-                                <p class="text-xs text-slate-500 mt-0.5">During school hours</p>
-                            </div>
-                            <span class="badge bg-green-100 text-green-700">High Demand</span>
-                        </div>
-                        <button onclick="window.openApplicationModal('Morning: 9am-1pm EST')" 
-                                class="apply-btn w-full text-white font-semibold py-3 rounded-lg mt-2 text-base">
-                            Apply for This Shift
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Afternoon Shifts -->
-            <div class="mb-6">
-                <h3 class="text-base font-bold text-slate-700 mb-3 flex items-center">
-                    <span class="text-xl mr-2">☀️</span>
-                    Afternoon Shifts
-                </h3>
-                
-                <div class="space-y-3">
-                    <div class="shift-card bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-                        <div class="flex justify-between items-start mb-2">
-                            <div>
-                                <p class="font-bold text-lg text-slate-800">1pm - 5pm EST</p>
-                                <p class="text-xs text-slate-500 mt-0.5">Flexible midday hours</p>
-                            </div>
-                            <span class="badge bg-blue-100 text-blue-700">Open</span>
-                        </div>
-                        <button onclick="window.openApplicationModal('Afternoon: 1pm-5pm EST')" 
-                                class="apply-btn w-full text-white font-semibold py-3 rounded-lg mt-2 text-base">
-                            Apply for This Shift
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Evening Shifts -->
-            <div class="mb-6">
-                <h3 class="text-base font-bold text-slate-700 mb-3 flex items-center">
-                    <span class="text-xl mr-2">🌙</span>
-                    Evening Shifts
-                </h3>
-                
-                <div class="space-y-3">
-                    <div class="shift-card bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-                        <div class="flex justify-between items-start mb-2">
-                            <div>
-                                <p class="font-bold text-lg text-slate-800">5pm - 9pm EST</p>
-                                <p class="text-xs text-slate-500 mt-0.5">After dinner hours</p>
-                            </div>
-                            <span class="badge bg-blue-100 text-blue-700">Open</span>
-                        </div>
-                        <button onclick="window.openApplicationModal('Evening: 5pm-9pm EST')" 
-                                class="apply-btn w-full text-white font-semibold py-3 rounded-lg mt-2 text-base">
-                            Apply for This Shift
-                        </button>
-                    </div>
-                    
-                    <div class="shift-card bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-                        <div class="flex justify-between items-start mb-2">
-                            <div>
-                                <p class="font-bold text-lg text-slate-800">9pm - 1am EST</p>
-                                <p class="text-xs text-slate-500 mt-0.5">Late night availability</p>
-                            </div>
-                            <span class="badge bg-purple-100 text-purple-700">Limited</span>
-                        </div>
-                        <button onclick="window.openApplicationModal('Evening: 9pm-1am EST')" 
-                                class="apply-btn w-full text-white font-semibold py-3 rounded-lg mt-2 text-base">
-                            Apply for This Shift
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Requirements -->
-            <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-4">
-                <h3 class="font-bold text-sm text-slate-800 mb-2">Basic Requirements:</h3>
-                <ul class="text-xs text-slate-600 space-y-1.5">
-                    <li class="flex items-start">
-                        <span class="mr-2">•</span>
-                        <span>Computer, laptop, or smartphone with internet</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="mr-2">•</span>
-                        <span>Basic typing or data entry skills</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="mr-2">•</span>
-                        <span>Reliable availability during chosen shifts</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="mr-2">•</span>
-                        <span>Must be 18+ years old</span>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Why Apply -->
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div class="flex items-start">
-                    <svg class="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                    </svg>
-                    <div>
-                        <p class="text-sm font-semibold text-blue-900 mb-1">Why Join Our Team?</p>
-                        <ul class="text-xs text-blue-800 space-y-1">
-                            <li>• No experience required—paid training provided</li>
-                            <li>• Biweekly payments via direct deposit or credit card</li>
-                            <li>• Choose between part-time or full-time schedules</li>
-                            <li>• Weekend shifts available for extra income</li>
-                        </ul>
-                    </div>
+                <div class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20">
+                    👶 Family Friendly
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Response Notification -->
-    <div id="responseNotification" class="hidden fixed bottom-4 left-4 right-4 z-50 max-w-md mx-auto">
-        <div class="notification-popup bg-white rounded-lg shadow-2xl border border-gray-200 p-4">
-            <div class="flex items-start justify-between">
-                <div class="flex items-start">
-                    <div class="flex-shrink-0">
-                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <div class="ml-3 flex-1">
-                        <p class="text-sm font-semibold text-slate-900">Application Review Timeline</p>
-                        <p class="text-xs text-slate-600 mt-1">We review all applications daily. You'll receive a response within 24-48 hours via email or WhatsApp.</p>
+    <!-- Social Proof Section -->
+    <div class="max-w-6xl mx-auto px-6 py-8 -mt-6">
+        <div class="bg-white rounded-2xl shadow-xl p-6 border-2 border-teal-100">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-teal-600 heading-font">420+</div>
+                    <div class="text-xs text-slate-600 mt-1">Active Processors</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-cyan-600 heading-font">4.9★</div>
+                    <div class="text-xs text-slate-600 mt-1">Employee Rating</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-teal-600 heading-font">96%</div>
+                    <div class="text-xs text-slate-600 mt-1">Stay Rate</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-cyan-600 heading-font">24-48h</div>
+                    <div class="text-xs text-slate-600 mt-1">Response Time</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-6 py-8">
+
+        <!-- Key Benefits -->
+        <div class="mb-12">
+            <h2 class="heading-font text-2xl font-bold text-slate-800 mb-6 text-center">Why Join Our Healthcare Team?</h2>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-white rounded-xl p-6 border-2 border-teal-100 card-hover">
+                    <div class="text-3xl mb-3">🏥</div>
+                    <h3 class="font-semibold text-lg text-slate-800 mb-2">Healthcare Benefits</h3>
+                    <p class="text-sm text-slate-600">Comprehensive medical, dental coverage for full-time positions</p>
+                </div>
+                <div class="bg-white rounded-xl p-6 border-2 border-cyan-100 card-hover">
+                    <div class="text-3xl mb-3">💵</div>
+                    <h3 class="font-semibold text-lg text-slate-800 mb-2">Competitive Pay</h3>
+                    <p class="text-sm text-slate-600">$19-24/hour with bi-weekly direct deposit</p>
+                </div>
+                <div class="bg-white rounded-xl p-6 border-2 border-teal-100 card-hover">
+                    <div class="text-3xl mb-3">⏰</div>
+                    <h3 class="font-semibold text-lg text-slate-800 mb-2">Structured Sessions</h3>
+                    <p class="text-sm text-slate-600">4-hour focused work periods with clear schedules</p>
+                </div>
+                <div class="bg-white rounded-xl p-6 border-2 border-cyan-100 card-hover">
+                    <div class="text-3xl mb-3">👨‍👩‍👧‍👦</div>
+                    <h3 class="font-semibold text-lg text-slate-800 mb-2">Family Environment</h3>
+                    <p class="text-sm text-slate-600">Background activity acceptable - we understand real life</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- HIPAA Compliance -->
+        <div class="bg-gradient-to-r from-teal-50 to-cyan-50 border-2 border-teal-200 rounded-xl p-6 mb-8">
+            <div class="flex items-start gap-4">
+                <div class="text-4xl">🔒</div>
+                <div>
+                    <h3 class="font-bold text-lg text-teal-900 mb-2">HIPAA Compliance & Security</h3>
+                    <p class="text-sm text-slate-700 mb-3">All medical record processing follows strict HIPAA guidelines. Your work environment is secured through encrypted connections and compliant protocols.</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-white px-3 py-1 rounded-full text-xs font-medium text-teal-700 border border-teal-200">Encrypted Systems</span>
+                        <span class="bg-white px-3 py-1 rounded-full text-xs font-medium text-teal-700 border border-teal-200">Secure Access</span>
+                        <span class="bg-white px-3 py-1 rounded-full text-xs font-medium text-teal-700 border border-teal-200">Audit Trail</span>
                     </div>
                 </div>
-                <button onclick="window.closeNotification()" class="ml-3 text-gray-400 hover:text-gray-600">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </div>
+        </div>
+
+        <!-- Ideal Candidates -->
+        <div class="mb-12">
+            <h2 class="heading-font text-2xl font-bold text-slate-800 mb-6 text-center">Perfect For</h2>
+            <div class="bg-white rounded-xl p-6 border-2 border-slate-100 space-y-3">
+                <div class="flex items-start gap-3">
+                    <svg class="w-6 h-6 text-teal-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                     </svg>
-                </button>
+                    <p class="text-slate-700">Parents managing childcare while earning income</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <svg class="w-6 h-6 text-teal-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <p class="text-slate-700">Healthcare professionals seeking remote work</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <svg class="w-6 h-6 text-teal-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <p class="text-slate-700">Individuals seeking structured, meaningful work</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <svg class="w-6 h-6 text-teal-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <p class="text-slate-700">Anyone needing flexible, stable remote employment</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- APPLICATION MODAL -->
-    <div id="applicationModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
-        <div class="modal-overlay fixed inset-0" onclick="window.closeApplicationModal()"></div>
-        
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
-            <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-auto transform transition-all max-h-[90vh] flex flex-col">
-                
-                <!-- Header -->
-                <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-blue-50 to-green-50 rounded-t-2xl flex-shrink-0">
-                    <h2 class="text-lg font-bold text-slate-800">Quick Application</h2>
-                    <button onclick="window.closeApplicationModal()" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
-                </div>
+        <!-- Available Sessions -->
+        <div class="mb-12">
+            <h2 class="heading-font text-2xl font-bold text-slate-800 mb-2 text-center">Available Work Sessions</h2>
+            <p class="text-center text-slate-600 text-sm mb-6">4-hour focused sessions • Choose part-time (1-5 sessions/week) or full-time (8+ sessions/week)</p>
 
-                <!-- Scrollable Form Content -->
-                <div class="px-6 py-6 overflow-y-auto flex-grow">
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                        <p class="text-xs text-blue-900">
-                            <span class="font-semibold">Position Applied For:</span>
-                            <span id="modalShiftTitle" class="block text-sm font-bold text-blue-700 mt-1"></span>
-                        </p>
+            <!-- Morning Sessions -->
+            <div class="mb-6">
+                <h3 class="font-semibold text-lg text-slate-700 mb-3 flex items-center gap-2">
+                    <span class="text-2xl">🌅</span> Morning Sessions
+                </h3>
+                <div class="space-y-3">
+                    <div class="bg-white rounded-xl p-5 border-2 border-teal-100 card-hover cursor-pointer" onclick="window.submitApplication('Morning: 5am-9am EST')">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <p class="font-bold text-xl text-slate-800">5am - 9am EST</p>
+                                <p class="text-xs text-slate-500 mt-1">Early hours before household wakes</p>
+                            </div>
+                            <span class="bg-teal-100 text-teal-700 px-3 py-1 rounded-full text-xs font-semibold">Available</span>
+                        </div>
+                        <button class="w-full gradient-primary text-white font-semibold py-3 rounded-lg mt-3 hover:shadow-lg transition-all">
+                            Apply for This Session
+                        </button>
                     </div>
 
-                    <form id="application-form" class="space-y-4" method="POST" action="https://formspree.io/f/mblnwpvd">
-                        
-                        <input type="text" name="_gotcha" style="display:none" />
-                        <input type="hidden" id="selectedShiftInput" name="selectedShift" value="">
-                        <input type="hidden" id="sourceInput" name="source" value="tiktok-direct">
-
-                        <!-- Personal Information -->
-                        <div>
-                            <label class="block text-left text-sm font-medium text-slate-700 mb-1.5">Full Name *</label>
-                            <input type="text" name="fullName" required placeholder="First and Last Name" class="form-input">
-                        </div>
-
-                        <!-- Contact Information -->
-                        <div>
-                            <label class="block text-left text-sm font-medium text-slate-700 mb-1.5">Email Address *</label>
-                            <input type="email" name="_replyto" required placeholder="your.email@example.com" class="form-input">
-                        </div>
-
-                        <div>
-                            <label class="block text-left text-sm font-medium text-slate-700 mb-1.5">Phone Number (WhatsApp Preferred) *</label>
-                            <input type="tel" name="phone" required placeholder="+1 (555) 000-0000" class="form-input">
-                        </div>
-                        
-                        <!-- Location (General) -->
-                        <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-white rounded-xl p-5 border-2 border-cyan-100 card-hover cursor-pointer" onclick="window.submitApplication('Morning: 9am-1pm EST')">
+                        <div class="flex justify-between items-start mb-2">
                             <div>
-                                <label class="block text-left text-sm font-medium text-slate-700 mb-1.5">City *</label>
-                                <input type="text" name="city" required placeholder="City" class="form-input">
+                                <p class="font-bold text-xl text-slate-800">9am - 1pm EST</p>
+                                <p class="text-xs text-slate-500 mt-1">During school/childcare hours</p>
                             </div>
-                            <div>
-                                <label class="block text-left text-sm font-medium text-slate-700 mb-1.5">State *</label>
-                                <input type="text" name="state" required placeholder="State" class="form-input">
-                            </div>
+                            <span class="bg-cyan-100 text-cyan-700 px-3 py-1 rounded-full text-xs font-semibold">High Demand</span>
                         </div>
-
-                        <!-- Employment Details -->
-                        <div>
-                            <label class="block text-left text-sm font-medium text-slate-700 mb-1.5">Work Experience Level *</label>
-                            <select name="experience" class="form-input" required>
-                                <option value="" disabled selected>Select your experience</option>
-                                <option value="No Experience">No Experience (Training Provided)</option>
-                                <option value="Entry Level">Entry Level (Less than 1 year)</option>
-                                <option value="Intermediate">Intermediate (1-3 years)</option>
-                                <option value="Experienced">Experienced (3+ years)</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-left text-sm font-medium text-slate-700 mb-1.5">Desired Employment Type *</label>
-                            <select name="employmentType" class="form-input" required>
-                                <option value="" disabled selected>Select employment type</option>
-                                <option value="Part-Time">Part-Time (4-20 hours/week)</option>
-                                <option value="Full-Time">Full-Time (32+ hours/week)</option>
-                                <option value="Flexible">Flexible (Open to either)</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-left text-sm font-medium text-slate-700 mb-1.5">Available Start Date *</label>
-                            <input type="date" name="startDate" required class="form-input">
-                        </div>
-
-                        <!-- Resume/CV Upload (Optional) -->
-                        <div>
-                            <label class="block text-left text-sm font-medium text-slate-700 mb-1.5">Resume/CV or LinkedIn Profile (Optional)</label>
-                            <input type="url" name="resumeLink" placeholder="Paste link to resume or LinkedIn" class="form-input">
-                            <p class="text-xs text-slate-500 mt-1 text-left">If sharing a document, ensure link permissions are enabled</p>
-                        </div>
-
-                        <!-- Legal Authorization -->
-                        <div class="border-t border-gray-200 pt-4 mt-4">
-                            <div class="bg-slate-50 rounded-lg p-3">
-                                <label class="flex items-start text-xs text-slate-700 cursor-pointer">
-                                    <input type="checkbox" name="workAuthorization" required class="mt-0.5 mr-2 flex-shrink-0">
-                                    <span>I confirm that I am 18+ years old and legally authorized to work in the United States *</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <input type="hidden" name="_subject" value="NEW APPLICATION: Remote Data Entry Position">
-                        
-                        <div id="status-message" class="text-center mt-4 text-sm font-medium hidden"></div>
-
-                        <button type="submit" id="submit-button" class="w-full apply-btn text-white py-4 rounded-lg font-bold text-base shadow-lg mt-6">
-                            <span id="button-text">Submit Application</span>
-                            <span id="loading-spinner" class="hidden inline-block animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full"></span>
+                        <button class="w-full gradient-primary text-white font-semibold py-3 rounded-lg mt-3 hover:shadow-lg transition-all">
+                            Apply for This Session
                         </button>
-                        
-                        <p class="text-xs text-center text-slate-500 mt-3">🔒 Your information is encrypted and HIPAA compliant</p>
-                    </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Afternoon Sessions -->
+            <div class="mb-6">
+                <h3 class="font-semibold text-lg text-slate-700 mb-3 flex items-center gap-2">
+                    <span class="text-2xl">☀️</span> Afternoon Sessions
+                </h3>
+                <div class="space-y-3">
+                    <div class="bg-white rounded-xl p-5 border-2 border-teal-100 card-hover cursor-pointer" onclick="window.submitApplication('Afternoon: 1pm-5pm EST')">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <p class="font-bold text-xl text-slate-800">1pm - 5pm EST</p>
+                                <p class="text-xs text-slate-500 mt-1">Flexible midday hours</p>
+                            </div>
+                            <span class="bg-teal-100 text-teal-700 px-3 py-1 rounded-full text-xs font-semibold">Available</span>
+                        </div>
+                        <button class="w-full gradient-primary text-white font-semibold py-3 rounded-lg mt-3 hover:shadow-lg transition-all">
+                            Apply for This Session
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Evening Sessions -->
+            <div>
+                <h3 class="font-semibold text-lg text-slate-700 mb-3 flex items-center gap-2">
+                    <span class="text-2xl">🌙</span> Evening Sessions
+                </h3>
+                <div class="space-y-3">
+                    <div class="bg-white rounded-xl p-5 border-2 border-teal-100 card-hover cursor-pointer" onclick="window.submitApplication('Evening: 5pm-9pm EST')">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <p class="font-bold text-xl text-slate-800">5pm - 9pm EST</p>
+                                <p class="text-xs text-slate-500 mt-1">After dinner hours</p>
+                            </div>
+                            <span class="bg-teal-100 text-teal-700 px-3 py-1 rounded-full text-xs font-semibold">Available</span>
+                        </div>
+                        <button class="w-full gradient-primary text-white font-semibold py-3 rounded-lg mt-3 hover:shadow-lg transition-all">
+                            Apply for This Session
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-5 border-2 border-purple-100 card-hover cursor-pointer" onclick="window.submitApplication('Evening: 9pm-1am EST')">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <p class="font-bold text-xl text-slate-800">9pm - 1am EST</p>
+                                <p class="text-xs text-slate-500 mt-1">Late evening availability</p>
+                            </div>
+                            <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-semibold">Limited</span>
+                        </div>
+                        <button class="w-full gradient-primary text-white font-semibold py-3 rounded-lg mt-3 hover:shadow-lg transition-all">
+                            Apply for This Session
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Requirements -->
+        <div class="bg-slate-50 border-2 border-slate-200 rounded-xl p-6 mb-8">
+            <h3 class="font-bold text-lg text-slate-800 mb-4">Essential Requirements</h3>
+            <ul class="space-y-2 text-sm text-slate-600">
+                <li class="flex items-start gap-2">
+                    <span class="text-teal-600">•</span>
+                    <span>Computer or tablet with reliable internet connection</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="text-teal-600">•</span>
+                    <span>Basic familiarity with medical terminology (training provided)</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="text-teal-600">•</span>
+                    <span>Consistent availability during selected sessions</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="text-teal-600">•</span>
+                    <span>Must be 18+ years old with work authorization</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Training Info -->
+        <div class="bg-gradient-to-r from-cyan-50 to-teal-50 border-2 border-cyan-200 rounded-xl p-6 mb-8">
+            <h3 class="font-bold text-lg text-cyan-900 mb-3">Comprehensive Training Program</h3>
+            <p class="text-sm text-slate-700 mb-4">We provide complete paid training to ensure your success. No prior medical records experience required.</p>
+            <div class="grid md:grid-cols-2 gap-3 text-sm">
+                <div class="flex items-center gap-2">
+                    <span class="text-cyan-600">✓</span>
+                    <span>Paid training period</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-cyan-600">✓</span>
+                    <span>HIPAA certification included</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-cyan-600">✓</span>
+                    <span>Medical terminology basics</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-cyan-600">✓</span>
+                    <span>System access & tools</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Form Submission Script -->
-    <script type="module">
-        const form = document.getElementById('application-form');
-        const submitButton = document.getElementById('submit-button');
-        const buttonText = document.getElementById('button-text');
-        const loadingSpinner = document.getElementById('loading-spinner');
-        const statusMessage = document.getElementById('status-message');
+    <!-- Footer -->
+    <div class="bg-slate-800 text-white py-8 px-6 mt-12">
+        <div class="max-w-4xl mx-auto text-center">
+            <p class="text-sm text-slate-300 mb-2">Medical Records Processing Services</p>
+            <p class="text-xs text-slate-400">HIPAA Compliant • Equal Opportunity Employer</p>
+        </div>
+    </div>
 
-        const setLoading = (isLoading) => {
-            submitButton.disabled = isLoading;
-            loadingSpinner.classList.toggle('hidden', !isLoading);
-            buttonText.classList.toggle('hidden', isLoading);
-        };
-
-        const showStatus = (message, isSuccess = true) => {
-            statusMessage.textContent = message;
-            statusMessage.classList.remove('hidden', 'text-red-500', 'text-green-500');
-            statusMessage.classList.add(isSuccess ? 'text-green-500' : 'text-red-500');
-        };
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            setLoading(true);
-            showStatus('', false);
-
-            try {
-                const response = await fetch(form.action, {
-                    method: form.method,
-                    body: new FormData(form),
-                    headers: { 'Accept': 'application/json' }
-                });
-
-                setLoading(false);
-
-                if (response.ok) {
-                    showStatus('✅ Application submitted successfully! Check your email within 24-48 hours.', true);
-                    form.reset();
-                    window.selectedShift = '';
-                    setTimeout(window.closeApplicationModal, 3000);
-                } else {
-                    showStatus('❌ Submission error. Please check your connection and try again.', false);
-                }
-            } catch (error) {
-                setLoading(false);
-                showStatus('❌ Submission error. Please check your connection and try again.', false);
-                console.error('Form error:', error);
-            }
-        });
-    </script>
 </body>
 </html>

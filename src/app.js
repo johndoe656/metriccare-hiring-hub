@@ -1,6 +1,8 @@
-import { submitApplication, getApplicationMetrics, getContentPrompts } from './supabase.js'
+import { submitApplication as submitApplicationToDb, getApplicationMetrics, getContentPrompts } from './supabase.js'
 import { Analytics } from './analytics.js'
 import { contentPrompts, getRandomPrompt, getAllCategories } from './contentPrompts.js'
+
+export const submitApplication = submitApplicationToDb
 
 export const initializeApp = () => {
   const applicationForm = document.getElementById('application-form')
@@ -39,7 +41,7 @@ const handleFormSubmit = async (e) => {
       selectedShift: formData.get('selectedShift')
     }
 
-    const result = await submitApplication(data)
+    const result = await submitApplicationToDb(data)
 
     if (result.success) {
       statusMessage.textContent = '✅ Application submitted successfully! Check your email within 24-48 hours.'
